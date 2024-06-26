@@ -7,7 +7,7 @@ import secrets
 import random
 
 # Correct RPC endpoint for devnet
-client = Client("https://api.devnet.solana.com")
+client = Client("https://devnet.sonic.game")
 
 def getbal(sender):
     balance = client.get_balance(sender)
@@ -38,9 +38,19 @@ def wait_until_time(hour, minute):
     if now > target:
         target += timedelta(days=1)
 
-    time_to_wait = (target - now).total_seconds()
-    print(f"Waiting for {time_to_wait / 3600:.2f} hours until {target.strftime('%H:%M:%S')} UTC")
-    time.sleep(time_to_wait)
+    while True:
+        now = datetime.utcnow()
+        time_to_wait = (target - now).total_seconds()
+
+        if time_to_wait <= 0:
+            break
+
+        hours, remainder = divmod(time_to_wait, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        print(f"Time until {target.strftime('%H:%M:%S')} UTC: {int(hours):02}:{int(minutes):02}:{int(seconds):02}", end='\r')
+        time.sleep(1)
+    
+    print(f"\nReached {target.strftime('%H:%M:%S')} UTC. Starting transactions...")
 
 print("Auto Send Random Solana To Random Address")
 loop = input("How Many You Want To Transaction? : ")
