@@ -7,12 +7,7 @@ import secrets
 import random
 
 # Correct RPC endpoint for devnet
-ENDPOINTS = (
-    "https://api.mainnet-beta.solana.com",
-    "https://api.devnet.solana.com",
-    "https://api.testnet.solana.com",
-    "https://devnet.sonic.game",
-)
+client = Client("https://api.devnet.solana.com")
 
 def getbal(sender):
     balance = client.get_balance(sender)
