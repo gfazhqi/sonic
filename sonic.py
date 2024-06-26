@@ -6,25 +6,26 @@ import time
 import secrets
 import random
 
-client = Client("https://devnet.sonic.game")
+# Correct RPC endpoint for devnet
+client = Client("https://api.devnet.solana.com")
 
 def getbal(sender):
     balance = client.get_balance(sender)
     tosol = lamport_to_sol(balance)
-    print("Your Balance : ",tosol, "SOL")
+    print("Your Balance : ", tosol, "SOL")
     print("")
 
 def tx_sol(sender, keysender, receiver, value):
     instruction = transfer(
         from_public_key=sender,
-        to_public_key=receiver, 
+        to_public_key=receiver,
         lamports=int(value)
     )
 
     transaction = Transaction(instructions=[instruction], signers=[keysender])
 
     result = client.send_transaction(transaction)
-    print(sender," Send ",lamport_to_sol(value)," SOL To ",receiver)
+    print(sender, " Send ", lamport_to_sol(value), " SOL To ", receiver)
     print("Transaction ID : ", result)
     getbal(sender)
     print("Transaction Will Continue For 3 Second...")
@@ -42,17 +43,17 @@ def wait_until_time(hour, minute):
     time.sleep(time_to_wait)
 
 print("Auto Send Random Solana To Random Address")
-loop = input("How Many You Want To Transaction ? : ")
+loop = input("How Many You Want To Transaction? : ")
 
 wait_until_time(0, 5)
 
-for i in range(0,int(loop)):
+for i in range(0, int(loop)):
     with open('keylist.txt', 'r') as file:
         local_data = file.read().splitlines()
         for pvkeylist in local_data:
             keysender = Keypair().from_private_key(pvkeylist)
             sender = keysender.public_key
-            keyreceiver = Keypair() #generate random pvkey
+            keyreceiver = Keypair()  # generate random pvkey
             receiver = keyreceiver.public_key
             inputval = random.uniform(0.001, 0.0011)
             value = sol_to_lamport(inputval)
